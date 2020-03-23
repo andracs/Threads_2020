@@ -13,12 +13,17 @@ import javafx.stage.Stage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
+// 30.1 (Revise Listing 30.1) Rewrite Listing 30.1 to display the output in a text area, as shown in Figure 30.30.
 public class GUI extends Application {
 
     // De her 2 objekter skal vi bruge i alle sub-klasser også, derfor instansvariabler
     TextArea textArea = new TextArea();
-    String text2Show;
+    static String text2Show = "";
+    private static final Semaphore semaphore = new Semaphore(1);
+    static int clickCounter = 0;
+
 
     @Override
     public void start(Stage stage) {
@@ -44,7 +49,7 @@ public class GUI extends Application {
         // Vi skal jo også have en knap med en lækker event-handler lambda expression, der starter trådene
         Button button = new Button("Giv mig tråde!");
         button.setOnAction((EventHandler) event -> {
-            textArea.setText("Resultat fra tråde: \n");
+            textArea.setText("Resultat fra tråde (" + clickCounter++ + "): \n");
             startTraade();
         });
         vBox.getChildren().add(button);
@@ -56,8 +61,8 @@ public class GUI extends Application {
     }
 
     /**
-     *  Metoden, der starter 3 konkurrerende tråde
-     * */
+     * Metoden, der starter 3 konkurrerende tråde
+     */
     public void startTraade() {
 
         text2Show = "";
@@ -68,13 +73,12 @@ public class GUI extends Application {
         Runnable print100 = new PrintNumGUI(100);
 
         // Create threads
-        System.out.println("Parallel gennemførsel:");
         Thread thread1 = new Thread(printA);
         Thread thread2 = new Thread(printB);
         Thread thread3 = new Thread(print100);
 
         // Using ExecutorService to manage thread execution
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newFixedThreadPool(10);
 
         executor.execute(thread1);
         executor.execute(thread2);
@@ -115,7 +119,9 @@ public class GUI extends Application {
          */
         public void run() {
             for (int i = 0; i < times; i++) {
-                text2Show += String.valueOf(charToPrint);
+                synchronized (semaphore) {
+                    text2Show += String.valueOf(charToPrint);
+                }
             }
         }
     }
@@ -131,11 +137,13 @@ public class GUI extends Application {
             lastNum = n;
         }
 
-        @Override
         /** Tell the thread how to run */
+        @Override
         public void run() {
             for (int i = 1; i <= lastNum; i++) {
-                text2Show += String.valueOf(i);
+                synchronized (semaphore) {
+                    text2Show = text2Show + String.valueOf(i);
+                }
             }
         }
     }
