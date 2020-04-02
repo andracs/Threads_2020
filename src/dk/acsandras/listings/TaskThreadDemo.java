@@ -4,7 +4,7 @@
  * Licensed under the MIT License
  * 23/03/2020
  */
-package dk.acsandras.liang_examples;
+package dk.acsandras.listings;
 
 import java.util.Scanner;
 

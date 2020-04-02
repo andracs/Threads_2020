@@ -62,13 +62,13 @@ public class SyncTusindeThreads {
      */
     private static class sumMedSync implements Runnable {
 
-        static final Semaphore lock = new Semaphore(1);
+        static final Semaphore SEMAPHORE = new Semaphore(1);
 
         @Override
         public void run() {
 
             // Denne kodeblok bliver synchronized dvs, thread safe
-            synchronized (lock) {
+            synchronized (SEMAPHORE) {
                 sumMedSyncInt += 1;
             }
 

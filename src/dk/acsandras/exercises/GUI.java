@@ -28,7 +28,7 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) {
 
-        // Lidt gejl, som kan vise java og kavafx version
+        // Lidt gejl, som kan vise java og javafx version
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
@@ -77,8 +77,9 @@ public class GUI extends Application {
         Thread thread2 = new Thread(printB);
         Thread thread3 = new Thread(print100);
 
+
         // Using ExecutorService to manage thread execution
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
 
         executor.execute(thread1);
         executor.execute(thread2);
